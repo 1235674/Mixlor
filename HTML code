@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Mixer</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: url('background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 80%;
+            max-width: 400px; /* Adjust the max-width based on your preference */
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+
+        input {
+            padding: 8px;
+            width: 100%;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        select {
+            padding: 8px;
+            width: 100%;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        #colorPreview {
+            width: 100%;
+            margin: 20px 0;
+            border-radius: 4px;
+            height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <audio id="sound" src="button-click.mp3"></audio>
+    <div class="container">
+        <h1>Hex Color to Paint Mixer</h1>
+        <label for="hexInput">Enter Hex Color:</label>
+        <input type="text" id="hexInput" placeholder="e.g., #ff5733">
+        <label for="scaleSelect">Select Scale:</label>
+        <select id="scaleSelect">
+            <option value="1">1x (100%)</option>
+            <option value="0.75">0.75x (75%)</option>
+            <option value="0.5">0.5x (50%)</option>
+            <option value="0.25">0.25x (25%)</option>
+        </select>
+        <button onclick="convertColor()">Convert</button>
+        <div id="result"></div>
+        <div id="colorPreview"></div>
+    </div>
+
+    <script>
+        function convertColor() {
+            var hexColor = document.getElementById('hexInput').value;
+            var scale = parseFloat(document.getElementById('scaleSelect').value);
+
+            if (!/^#[0-9A-Fa-f]{6}$/i.test(hexColor)) {
+                alert('Please enter a valid hex color code.');
+                return;
+            }
+
+            var rgbColor = hexToRgb(hexColor);
+            var redPaint = rgbColor.r / 255 * 100 * scale;
+            var yellowPaint = rgbColor.g / 255 * 100 * scale;
+            var bluePaint = rgbColor.b / 255 * 100 * scale;
+
+            var resultElement = document.getElementById('result');
+            resultElement.innerHTML = `To create the color ${hexColor} at a ${scale * 100}% scale, you need:<br>
+                                       ${redPaint} mL of red paint,<br>
+                                       ${yellowPaint} mL of yellow paint, and<br>
+                                       ${bluePaint} mL of blue paint.`;
+
+            updateColorPreview(hexColor);
+            playSound();
+        }
+
+        function hexToRgb(hex) {
+            hex = hex.replace(/^#/, '');
+            var bigint = parseInt(hex, 16);
+            var r = (bigint >> 16) & 255;
+            var g = (bigint >> 8) & 255;
+            var b = bigint & 255;
+            return { r, g, b };
+        }
+
+        function updateColorPreview(hexColor) {
+            var colorPreview = document.getElementById('colorPreview');
+            colorPreview.style.backgroundColor = hexColor;
+        }
+
+        function playSound() {
+            var sound = document.getElementById('sound');
+            sound.play();
+        }
+    </script>
+</body>
+</html>
